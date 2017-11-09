@@ -1,0 +1,43 @@
+{$CLEO}
+0000: NOP
+repeat
+wait 0
+until samp.Available()
+0B34: samp register_client_command "ppfake.set" to_label @create3DText1
+0B34: samp register_client_command "ppfake" to_label @create3DText 
+
+while true
+wait 0
+    if 31@ == 1
+    then
+    wait 0
+    0AF8: samp add_message_to_chat "%s говорит[%d]: %s" color 0xdddcd7 5@ 4@ 0@
+    0B44: samp 10@ = create_3d_text 0@ color 0xffffffff position 0.0 0.0 0.3 view_distance 50.0 show_behind_walls false attached_to_player 4@ attached_to_vehicle -1
+    wait 5000
+    0B45: samp destroy_3d_text 10@
+    0AC9: free_allocated_memory 4@
+    0AC9: free_allocated_memory 0@  
+    31@ = 0  
+    end
+end
+
+:create3DText1
+0AC8: 7@ = allocate_memory_size 512 
+0B35: samp 7@ = get_last_command_params 
+0AF5: write_string 7@ to_ini_file "cleo\PPfake.ini" section "main" key "1" 
+0AC9: free_allocated_memory 7@ 
+samp.CmdRet()
+
+:create3DText
+0B35: samp 4@ = get_last_command_params
+if 0AD4: 29@ = scan_string 4@ format "%d" 4@
+then
+0AC8: 5@ = allocate_memory_size 64 
+0AC8: 0@ = allocate_memory_size 512 
+0AF4: 0@ = read_string_from_ini_file "cleo\PPfake.ini" section "main" key "1" 
+0B36: samp 5@ = get_player_nickname 4@
+31@ = 1
+else
+0ACD: show_text_highpriority "ot 0 do 1000" time 1000
+end
+samp.CmdRet()
